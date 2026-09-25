@@ -100,6 +100,13 @@ public class InventarioFisicoService {
             throw new ValidacionException("El modelo es obligatorio");
         }
 
+        // Los componentes de CPU quedan exentos, igual que con el modelo: su formulario
+        // sólo captura dispositivo, marca y especificaciones
+        if (!esComponenteCpu(dispositivo) && dispositivo.isRequiereSerie()
+                && (dto.getSerie() == null || dto.getSerie().isBlank())) {
+            throw new ValidacionException("La serie es obligatoria para " + dispositivo.getNombre());
+        }
+
         if (estacion != null) {
             validarMaxPorEstacion(estacion.getId(), dispositivo);
         }
@@ -146,6 +153,12 @@ public class InventarioFisicoService {
         }
 
         validarMarcaDeDispositivo(fisico.getMarca(), fisico.getDispositivo());
+
+        // Se valida el estado final: cambiar de dispositivo también puede volver la serie obligatoria
+        if (!esComponenteCpu(fisico.getDispositivo()) && fisico.getDispositivo().isRequiereSerie()
+                && (fisico.getSerie() == null || fisico.getSerie().isBlank())) {
+            throw new ValidacionException("La serie es obligatoria para " + fisico.getDispositivo().getNombre());
+        }
 
         return toResponseDTO(fisicoRepository.save(fisico));
     }

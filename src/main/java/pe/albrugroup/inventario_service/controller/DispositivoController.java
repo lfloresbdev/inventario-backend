@@ -32,17 +32,19 @@ public class DispositivoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DispositivoResponseDTO> crear(@RequestBody Map<String, String> body) {
         boolean esComponenteCpu = Boolean.parseBoolean(body.getOrDefault("esComponenteCpu", "false"));
-        return ResponseEntity.status(HttpStatus.CREATED).body(dispositivoService.crear(body.get("nombre"), esComponenteCpu));
+        boolean requiereSerie = Boolean.parseBoolean(body.getOrDefault("requiereSerie", "true"));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(dispositivoService.crear(body.get("nombre"), esComponenteCpu, requiereSerie));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DispositivoResponseDTO> actualizar(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String nombre = body.get("nombre");
-        if (body.containsKey("esComponenteCpu")) {
-            return ResponseEntity.ok(dispositivoService.actualizar(id, nombre, Boolean.parseBoolean(body.get("esComponenteCpu"))));
-        }
-        return ResponseEntity.ok(dispositivoService.actualizar(id, nombre));
+        Boolean esComponenteCpu = body.containsKey("esComponenteCpu")
+                ? Boolean.parseBoolean(body.get("esComponenteCpu")) : null;
+        Boolean requiereSerie = body.containsKey("requiereSerie")
+                ? Boolean.parseBoolean(body.get("requiereSerie")) : null;
+        return ResponseEntity.ok(dispositivoService.actualizar(id, body.get("nombre"), esComponenteCpu, requiereSerie));
     }
 
     @DeleteMapping("/{id}")

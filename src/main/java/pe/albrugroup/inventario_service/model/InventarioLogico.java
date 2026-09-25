@@ -36,6 +36,8 @@ public class InventarioLogico {
     @Column(nullable = false)
     private String identificador;
 
+    /** Guarda el cifrado AES-GCM en base64, que ocupa bastante más que el texto plano. */
     @Convert(converter = SecretEncryptionConverter.class)
+    @Column(length = 512)
     private String contrasena;
 }

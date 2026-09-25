@@ -23,6 +23,10 @@ public class Dispositivo {
     @Column(nullable = false)
     private boolean esComponenteCpu = false;
 
+    /** Por defecto se exige serie; se desmarca para cables, cargadores y similares. */
+    @Column(nullable = false)
+    private boolean requiereSerie = true;
+
     @OneToMany(mappedBy = "dispositivo", fetch = FetchType.EAGER)
     private List<Marca> marcas = new ArrayList<>();
 }

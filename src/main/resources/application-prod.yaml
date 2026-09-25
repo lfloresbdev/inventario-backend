@@ -1,4 +1,9 @@
 spring:
+  # Flyway construye el esquema y Hibernate lo valida después (Spring Boot
+  # garantiza ese orden). Nunca poner ddl-auto distinto de validate aquí.
+  flyway:
+    enabled: true
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}

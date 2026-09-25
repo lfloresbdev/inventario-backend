@@ -12,5 +12,6 @@ public class DispositivoResponseDTO {
     private Long id;
     private String nombre;
     private boolean esComponenteCpu;
+    private boolean requiereSerie;
     private List<MarcaResponseDTO> marcas;
 }

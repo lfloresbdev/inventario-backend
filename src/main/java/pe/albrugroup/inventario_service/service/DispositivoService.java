@@ -22,38 +22,28 @@ public class DispositivoService {
         return dispositivoRepository.findAll().stream().map(this::toDTO).toList();
     }
 
-    public DispositivoResponseDTO crear(String nombre) {
-        return crear(nombre, false);
-    }
-
-    public DispositivoResponseDTO crear(String nombre, boolean esComponenteCpu) {
+    public DispositivoResponseDTO crear(String nombre, boolean esComponenteCpu, boolean requiereSerie) {
         if (dispositivoRepository.existsByNombre(nombre)) {
             throw new RecursoDuplicadoException("Ya existe el dispositivo '" + nombre + "'");
         }
         Dispositivo d = new Dispositivo();
         d.setNombre(nombre);
         d.setEsComponenteCpu(esComponenteCpu);
+        d.setRequiereSerie(requiereSerie);
         return toDTO(dispositivoRepository.save(d));
     }
 
-    public DispositivoResponseDTO actualizar(Long id, String nombre) {
+    /** Los flags nulos conservan el valor actual (semántica de patch). */
+    public DispositivoResponseDTO actualizar(Long id, String nombre, Boolean esComponenteCpu, Boolean requiereSerie) {
         Dispositivo d = obtener(id);
-        return actualizar(d, nombre, d.isEsComponenteCpu());
-    }
-
-    public DispositivoResponseDTO actualizar(Long id, String nombre, boolean esComponenteCpu) {
-        Dispositivo d = obtener(id);
-        return actualizar(d, nombre, esComponenteCpu);
-    }
-
-    private DispositivoResponseDTO actualizar(Dispositivo d, String nombre, boolean esComponenteCpu) {
         dispositivoRepository.findByNombre(nombre).ifPresent(otro -> {
             if (!otro.getId().equals(d.getId())) {
                 throw new RecursoDuplicadoException("Ya existe el dispositivo '" + nombre + "'");
             }
         });
         d.setNombre(nombre);
-        d.setEsComponenteCpu(esComponenteCpu);
+        if (esComponenteCpu != null) d.setEsComponenteCpu(esComponenteCpu);
+        if (requiereSerie != null) d.setRequiereSerie(requiereSerie);
         return toDTO(dispositivoRepository.save(d));
     }
 
@@ -71,6 +61,6 @@ public class DispositivoService {
                 .map(m -> new MarcaResponseDTO(m.getId(), m.getNombre()))
                 .sorted(Comparator.comparing(MarcaResponseDTO::getNombre))
                 .toList();
-        return new DispositivoResponseDTO(d.getId(), d.getNombre(), d.isEsComponenteCpu(), marcas);
+        return new DispositivoResponseDTO(d.getId(), d.getNombre(), d.isEsComponenteCpu(), d.isRequiereSerie(), marcas);
     }
 }

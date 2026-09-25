@@ -2,6 +2,11 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
+  # Flyway se auto-activa al estar en el classpath. Las migraciones son DDL de
+  # PostgreSQL, así que sólo se habilitan en prod; dev usa H2 con ddl-auto: update.
+  flyway:
+    enabled: false
+
 app:
   jwt:
     secret: ${JWT_SECRET}
