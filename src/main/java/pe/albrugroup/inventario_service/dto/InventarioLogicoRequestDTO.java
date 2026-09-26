@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.albrugroup.inventario_service.enums.Empresa;
+import pe.albrugroup.inventario_service.enums.EstadoLogico;
 import pe.albrugroup.inventario_service.enums.TipoAcceso;
 
 @Getter
@@ -26,4 +27,6 @@ public class InventarioLogicoRequestDTO {
 
     private String contrasena;
     private Long estacionId;
+    /** Opcional: permite dar de alta un item ya bloqueado o sin acceso. */
+    private EstadoLogico estado;
 }

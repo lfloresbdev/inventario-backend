@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.albrugroup.inventario_service.dto.*;
 import pe.albrugroup.inventario_service.enums.Empresa;
+import pe.albrugroup.inventario_service.enums.EstadoFisico;
 import pe.albrugroup.inventario_service.exception.RecursoNoEncontradoException;
 import pe.albrugroup.inventario_service.exception.ValidacionException;
 import pe.albrugroup.inventario_service.model.*;
@@ -125,6 +126,7 @@ public class InventarioFisicoService {
         fisico.setDiscoTipo(dto.getDiscoTipo());
         fisico.setDiscoEspacio(dto.getDiscoEspacio());
         fisico.setHostname(dto.getHostname());
+        if (dto.getEstado() != null) fisico.setEstado(dto.getEstado());
         return toResponseDTO(fisicoRepository.save(fisico));
     }
 
@@ -142,6 +144,7 @@ public class InventarioFisicoService {
         if (dto.getDiscoTipo() != null) fisico.setDiscoTipo(dto.getDiscoTipo());
         if (dto.getDiscoEspacio() != null) fisico.setDiscoEspacio(dto.getDiscoEspacio());
         if (dto.getHostname() != null) fisico.setHostname(dto.getHostname());
+        if (dto.getEstado() != null) fisico.setEstado(dto.getEstado());
         if (dto.getEstacionId() != null) {
             Estacion estacion = validarEstacion(dto.getEstacionId());
             validarEmpresaCoincide(fisico.getEmpresa(), estacion);
@@ -259,6 +262,22 @@ public class InventarioFisicoService {
                 f.getDiscoTipo(),
                 f.getDiscoEspacio(),
                 f.getHostname(),
-                localDTO);
+                localDTO,
+                resolverEstado(f));
+    }
+
+    /**
+     * Las condiciones almacenadas mandan; si no hay ninguna, el estado sale de la ubicación.
+     * Un componente hereda la del CPU que lo aloja, porque no tiene estación propia.
+     */
+    private EstadoFisico resolverEstado(InventarioFisico f) {
+        EstadoFisico almacenado = f.getEstado();
+        if (almacenado != null && almacenado.esCondicion()) {
+            return almacenado;
+        }
+        Estacion estacion = f.getEstacion() != null
+                ? f.getEstacion()
+                : (f.getParent() != null ? f.getParent().getEstacion() : null);
+        return estacion != null ? EstadoFisico.OPERATIVO : EstadoFisico.EN_ALMACEN;
     }
 }

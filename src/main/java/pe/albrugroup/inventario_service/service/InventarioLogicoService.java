@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.albrugroup.inventario_service.dto.*;
 import pe.albrugroup.inventario_service.enums.Empresa;
+import pe.albrugroup.inventario_service.enums.EstadoLogico;
 import pe.albrugroup.inventario_service.enums.TipoAcceso;
 import pe.albrugroup.inventario_service.exception.RecursoNoEncontradoException;
 import pe.albrugroup.inventario_service.model.Estacion;
@@ -55,6 +56,7 @@ public class InventarioLogicoService {
         logico.setTipoAcceso(dto.getTipoAcceso());
         logico.setIdentificador(dto.getIdentificador());
         logico.setContrasena(dto.getContrasena());
+        if (dto.getEstado() != null) logico.setEstado(dto.getEstado());
         return toResponseDTO(logicoRepository.save(logico));
     }
 
@@ -69,6 +71,7 @@ public class InventarioLogicoService {
         if (dto.getTipoAcceso() != null) logico.setTipoAcceso(dto.getTipoAcceso());
         if (dto.getIdentificador() != null) logico.setIdentificador(dto.getIdentificador());
         if (dto.getContrasena() != null) logico.setContrasena(dto.getContrasena());
+        if (dto.getEstado() != null) logico.setEstado(dto.getEstado());
         if (dto.getEstacionId() != null) {
             Estacion estacion = validarEstacion(dto.getEstacionId());
             validarEmpresaCoincide(logico.getEmpresa(), estacion);
@@ -143,8 +146,18 @@ public class InventarioLogicoService {
                 l.getEmpresa(),
                 estacionId,
                 l.getTipoAcceso(),
-                l.getIdentificador());
+                l.getIdentificador(),
+                resolverEstado(l));
         // sin "contrasena" a propósito
+    }
+
+    /** Las condiciones almacenadas mandan; si no, el estado sale de la asignación a estación. */
+    private EstadoLogico resolverEstado(InventarioLogico l) {
+        EstadoLogico almacenado = l.getEstado();
+        if (almacenado != null && almacenado.esCondicion()) {
+            return almacenado;
+        }
+        return l.getEstacion() != null ? EstadoLogico.ASIGNADO : EstadoLogico.SIN_ASIGNAR;
 
     }
 }

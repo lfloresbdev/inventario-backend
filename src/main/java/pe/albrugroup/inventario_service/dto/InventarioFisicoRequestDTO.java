@@ -29,4 +29,6 @@ public class InventarioFisicoRequestDTO {
     private Integer discoEspacio;
     private Long estacionId;
     private String hostname;
+    /** Opcional: permite dar de alta un item ya dañado. Si falta, queda EN_ALMACEN. */
+    private EstadoFisico estado;
 }

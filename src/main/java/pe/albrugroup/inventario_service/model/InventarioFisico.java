@@ -20,6 +20,11 @@ public class InventarioFisico {
     @Column(nullable = false)
     private Empresa empresa;
 
+    /** Sólo manda cuando guarda una condición; la ubicación se deriva al leer. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoFisico estado = EstadoFisico.EN_ALMACEN;
+
     @ManyToOne
     @JoinColumn(name = "estacion_id", nullable = true)
     private Estacion estacion;

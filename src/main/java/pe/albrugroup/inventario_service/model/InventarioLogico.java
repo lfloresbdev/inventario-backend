@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.albrugroup.inventario_service.converter.SecretEncryptionConverter;
 import pe.albrugroup.inventario_service.enums.Empresa;
+import pe.albrugroup.inventario_service.enums.EstadoLogico;
 import pe.albrugroup.inventario_service.enums.TipoAcceso;
 
 @Entity
@@ -24,6 +25,11 @@ public class InventarioLogico {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Empresa empresa;
+
+    /** Sólo manda cuando guarda una condición; la ubicación se deriva al leer. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoLogico estado = EstadoLogico.SIN_ASIGNAR;
 
     @ManyToOne
     @JoinColumn(name = "estacion_id", nullable = true)

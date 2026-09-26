@@ -21,4 +21,5 @@ public class InventarioFisicoUpdateDTO {
     private Integer discoEspacio;
     private Long estacionId;
     private String hostname;
+    private EstadoFisico estado;
 }

@@ -26,4 +26,5 @@ public class InventarioFisicoResponseDTO {
     private Integer discoEspacio;
     private String hostname;
     private LocalResponseDTO local;
+    private EstadoFisico estado;
 }
